@@ -295,6 +295,13 @@ class MimiModel(CompressionModel[_MimiState]):
         length = x.shape[-1]
         extra_metrics: tp.Dict[str, torch.Tensor] = {}
 
+        frame_size = self.frame_size
+
+        # The underlying convolutions no longer accept partial inputs,
+        # `x` needs to be exactly a multiple of the frame size,
+        # reproducing the previous padding behavior here.
+        x = pad_for_conv1d(x, frame_size, frame_size)
+
         if self.freeze_quantizer:
             if isinstance(self.quantizer, SplitResidualVectorQuantizer):
                 self.quantizer.rvq_first.eval()

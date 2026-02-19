@@ -422,11 +422,9 @@ class VectorQuantization(nn.Module):
         x = self._rearrange_input(x)
         quantized, codes, metrics = self._codebook(x, initialize=initialize)
 
-        if self.training:
-            quantized = x + (quantized - x).detach()
-            loss = F.mse_loss(x, quantized.detach())
-        else:
-            loss = zero_scalar(x.device)
+        
+        quantized = x + (quantized - x).detach()
+        loss = F.mse_loss(x, quantized.detach())
 
         quantized = self.project_out(quantized)
         quantized = self._rearrange_output(quantized)
@@ -492,14 +490,14 @@ class ResidualVectorQuantization(nn.Module):
                     all_metrics[key] = value / n_q
                 all_metrics[key + f"_{i + self.codebook_offset}"] = value
 
-        if self.training:
-            # Solving subtle bug with STE and RVQ: https://github.com/facebookresearch/encodec/issues/25
-            quantized_out = x + (quantized_out - x).detach()
-            to_average = []
-            for layer in self.layers:
-                assert isinstance(layer, VectorQuantization)
-                to_average += [layer._codebook.cluster_usage, layer._codebook.embedding_sum]
-                _average_tensors(to_average)
+        
+        # Solving subtle bug with STE and RVQ: https://github.com/facebookresearch/encodec/issues/25
+        quantized_out = x + (quantized_out - x).detach()
+        to_average = []
+        for layer in self.layers:
+            assert isinstance(layer, VectorQuantization)
+            to_average += [layer._codebook.cluster_usage, layer._codebook.embedding_sum]
+            _average_tensors(to_average)
 
         out_losses, out_codes = map(torch.stack, (all_losses, all_codes))
         return _VQForwardResult(quantized_out, out_codes, out_losses, all_metrics)
