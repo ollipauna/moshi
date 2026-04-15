@@ -491,8 +491,15 @@ class ResidualVectorQuantization(nn.Module):
                 all_metrics[key + f"_{i + self.codebook_offset}"] = value
 
         
-        # Solving subtle bug with STE and RVQ: https://github.com/facebookresearch/encodec/issues/25
         quantized_out = x + (quantized_out - x).detach()
+
+        if self.training:
+            # Solving subtle bug with STE and RVQ: https://github.com/facebookresearch/encodec/issues/25
+            to_average = []
+            for layer in self.layers:
+                assert isinstance(layer, VectorQuantization)
+                to_average += [layer._codebook.cluster_usage, layer._codebook.embedding_sum]
+                _average_tensors(to_average)
 
         out_losses, out_codes = map(torch.stack, (all_losses, all_codes))
         return _VQForwardResult(quantized_out, out_codes, out_losses, all_metrics)
