@@ -1,4 +1,30 @@
-# Moshi - PyTorch
+# Differentiable Moshi  - PyTorch
+
+This is a modified version of the official Moshi repo. This version uses the Straight-Through Estimator to track Mimi gradients during inference.
+The pretrained Mimi model can then be used for e.g. audio watermarking augmentation.
+
+### Usage
+
+```
+    from huggingface_hub import hf_hub_download
+    import torch
+
+    from moshi.models import loaders
+    
+    mimi_weight = hf_hub_download(loaders.DEFAULT_REPO, loaders.MIMI_NAME)
+    mimi = loaders.get_mimi(mimi_weight, device='cpu')
+    mimi.set_num_codebooks(8)  # up to 32 for mimi, but limited to 8 for moshi.
+
+    model.eval()
+    x = torch.randn(1, 1, 16000, requires_grad=True)
+    x_quantized = model(x).x
+
+    loss = x_quantized.mean()
+    loss.backward()
+
+    # x.grad is now defined
+```
+
 
 <a target="_blank" href="https://colab.research.google.com/github//kyutai-labs/moshi/blob/main/moshi/demo_moshi.ipynb">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>

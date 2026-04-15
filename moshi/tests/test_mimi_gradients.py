@@ -1,11 +1,7 @@
 from huggingface_hub import hf_hub_download
 import torch
 
-from moshi.models import loaders, LMGen
-
-mimi_weight = hf_hub_download(loaders.DEFAULT_REPO, loaders.MIMI_NAME)
-mimi = loaders.get_mimi(mimi_weight, device='cpu')
-mimi.set_num_codebooks(8)
+from moshi.models import loaders
 
 
 def test_mimi():
@@ -39,17 +35,12 @@ def test_mimi():
     # Check that gradients are being tracked
     assert x.grad is not None
 
-    # Check that gradient values look sensible
-    print(x.grad)
-
     # Check that adding noise changes the gradients
     x_other = x.detach() + (0.1**0.5) * torch.randn(1, 1, 16000)
     x_other.requires_grad_()
     x_quantized_other = model(x_other).x
     loss_other = torch.pow(x_quantized_other, 2).sum()
     loss_other.backward()
-    print(torch.mean(torch.abs(x.grad - x_other.grad)))
+    
+    assert not torch.allclose(x.grad, x_other.grad, atol=1e-1)
 
-
-if __name__ == "__main__":
-    test_mimi()
