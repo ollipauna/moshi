@@ -1,4 +1,4 @@
-# Differentiable Moshi  - PyTorch
+# Differentiable Mimi  - PyTorch
 
 This is a modified version of the official Moshi repo. This version uses the Straight-Through Estimator to track Mimi gradients during inference.
 The pretrained Mimi model can then be used for e.g. audio watermarking augmentation.
