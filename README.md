@@ -1,3 +1,5 @@
+# Check the ![moshi](https://github.com/ollipauna/moshi/tree/main/moshi) subfolder for information on the changed Mimi implementation.
+
 # Moshi: a speech-text foundation model for real time dialogue
 
 ![precommit badge](https://github.com/kyutai-labs/moshi/workflows/precommit/badge.svg)
