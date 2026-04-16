@@ -25,6 +25,11 @@ The pretrained Mimi model can then be used for e.g. audio watermarking augmentat
     # x.grad is now defined
 ```
 
+### Installation
+
+Clone the repo and install the moshi subdirectory with pip.
+
+### Below you have the contents of the README file from the official release.
 
 <a target="_blank" href="https://colab.research.google.com/github//kyutai-labs/moshi/blob/main/moshi/demo_moshi.ipynb">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
