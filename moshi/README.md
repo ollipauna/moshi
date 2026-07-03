@@ -12,8 +12,8 @@ The pretrained Mimi model can then be used for e.g. audio watermarking augmentat
     from moshi.models import loaders
     
     mimi_weight = hf_hub_download(loaders.DEFAULT_REPO, loaders.MIMI_NAME)
-    mimi = loaders.get_mimi(mimi_weight, device='cpu')
-    mimi.set_num_codebooks(8)  # up to 32 for mimi, but limited to 8 for moshi.
+    model = loaders.get_mimi(mimi_weight, device='cpu')
+    model.set_num_codebooks(8)  # up to 32 for mimi, but limited to 8 for moshi.
 
     model.eval()
     x = torch.randn(1, 1, 16000, requires_grad=True)
